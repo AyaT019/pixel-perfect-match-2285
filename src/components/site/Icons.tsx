@@ -33,3 +33,11 @@ export function WhatsappIcon({ className = "h-5 w-5" }: { className?: string }) 
     </svg>
   );
 }
+
+export function FacebookIcon({ className = "h-5 w-5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
+      <path d="M13.5 22v-8h2.7l.4-3.1h-3.1V8.9c0-.9.3-1.5 1.6-1.5h1.7V4.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.3V14h2.6v8h3.6z" />
+    </svg>
+  );
+}
