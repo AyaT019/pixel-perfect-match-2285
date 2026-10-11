@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { business, hasWhatsapp, services, whatsappLink } from "@/config/business";
+import { submitQuoteRequest } from "@/functions/quote-requests.functions";
 import { WhatsappIcon } from "./Icons";
 
 type Fields = { name: string; phone: string; service: string; location: string; message: string };
@@ -15,23 +17,48 @@ export function validate(f: Fields) {
   return e;
 }
 
+const messageFrom = (f: Fields) =>
+  `${business.whatsappMessage}\n\nNom : ${f.name}\nTéléphone : ${f.phone}\nService : ${f.service}\nLieu : ${f.location}\n\nProjet : ${f.message}`;
+
 const input = "w-full rounded-xl border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground/60 transition focus:border-primary focus:outline-none";
 
 export function QuoteForm() {
   const [f, setF] = useState<Fields>(empty);
   const [errors, setErrors] = useState<ReturnType<typeof validate>>({});
-  const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "saved" | "error">("idle");
+  const send = useServerFn(submitQuoteRequest);
   const set = (k: keyof Fields) => (e: { target: { value: string } }) => setF({ ...f, [k]: e.target.value });
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     const errs = validate(f);
     setErrors(errs);
     if (Object.keys(errs).length) return;
-    if (!hasWhatsapp()) { setStatus("error"); return; }
-    const msg = `${business.whatsappMessage}\n\nNom : ${f.name}\nTéléphone : ${f.phone}\nService : ${f.service}\nLieu : ${f.location}\n\nProjet : ${f.message}`;
-    const w = window.open(whatsappLink(msg), "_blank", "noopener");
-    setStatus(w === null ? "error" : "sent");
+    setStatus("sending");
+    // WhatsApp only opens while the click is still the active gesture, so the tab is
+    // created now and pointed at the message once the request has been stored.
+    const tab = hasWhatsapp() ? window.open("", "_blank") : null;
+    const msg = messageFrom(f);
+    try {
+      const res = await send({ data: f });
+      if (res.ok) {
+        setF(empty);
+        if (tab) {
+          tab.opener = null;
+          tab.location.href = whatsappLink(msg);
+          setStatus("sent");
+        } else {
+          setStatus("saved");
+        }
+        return;
+      }
+      tab?.close();
+      if (res.errors && Object.keys(res.errors).length) setErrors(res.errors);
+      setStatus("error");
+    } catch {
+      tab?.close();
+      setStatus("error");
+    }
   };
 
   const err = (k: keyof Fields) => errors[k] && <p id={`${k}-err`} className="mt-1.5 text-sm text-destructive">{errors[k]}</p>;
@@ -57,13 +84,26 @@ export function QuoteForm() {
         {field("location", "Ville / région", <input {...a("location")} placeholder="Ex. Tunis, Sousse…" />)}
       </div>
       {field("message", "Description du projet", <textarea {...a("message")} rows={5} placeholder="Type de logement, travaux envisagés, délais…" />)}
-      <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 font-semibold text-primary-foreground transition hover:glow">
-        <WhatsappIcon /> Envoyer ma demande via WhatsApp
+      <button type="submit" disabled={status === "sending"} className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 font-semibold text-primary-foreground transition hover:glow disabled:opacity-60">
+        <WhatsappIcon /> {status === "sending" ? "Envoi en cours…" : "Envoyer ma demande"}
       </button>
-      <p className="text-xs text-muted-foreground">Votre demande s'ouvre dans WhatsApp, prête à être envoyée. Aucune donnée n'est stockée sur ce site.</p>
+      <p className="text-xs text-muted-foreground">
+        Votre demande est enregistrée et transmise à {business.name}.{" "}
+        {hasWhatsapp() ? "WhatsApp s'ouvre ensuite avec votre message, prêt à être envoyé." : ""}
+      </p>
       <div aria-live="polite">
-        {status === "sent" && <p className="rounded-xl border border-success/40 bg-success/10 p-4 text-sm">WhatsApp s'est ouvert avec votre demande. Pensez à appuyer sur « Envoyer » pour la transmettre.</p>}
-        {status === "error" && <p className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm">{hasWhatsapp() ? "Impossible d'ouvrir WhatsApp. Autorisez les fenêtres pop-up ou contactez-nous par téléphone." : "Configuration requise : le numéro WhatsApp n'est pas encore renseigné. Votre demande n'a pas été envoyée."}</p>}
+        {status === "sent" && <p className="rounded-xl border border-success/40 bg-success/10 p-4 text-sm">Votre demande est bien enregistrée. WhatsApp s'est ouvert : appuyez sur « Envoyer » pour nous la transmettre.</p>}
+        {status === "saved" && (
+          <p className="rounded-xl border border-success/40 bg-success/10 p-4 text-sm">
+            Votre demande est bien enregistrée.{" "}
+            {hasWhatsapp() && <a href={whatsappLink(messageFrom(f))} target="_blank" rel="noopener noreferrer" className="font-semibold underline">L'envoyer aussi sur WhatsApp</a>}
+          </p>
+        )}
+        {status === "error" && (
+          <p className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm">
+            Votre demande n'a pas pu être envoyée. Réessayez, appelez le {business.phoneDisplay} ou écrivez à {business.email}.
+          </p>
+        )}
       </div>
     </form>
   );

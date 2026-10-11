@@ -7,20 +7,24 @@ import demoLighting from "@/assets/demo-lighting.jpg";
 import heroImg from "@/assets/hero.jpg";
 
 export const business = {
-  name: "[NOM DE L'ÉLECTRICIEN]",
+  name: "Ahmed Zouari",
   tagline: "Électricité bâtiment en Tunisie",
   // Numéro affiché (laisser "" pour afficher un avertissement de configuration)
-  phoneDisplay: "",
+  phoneDisplay: "+216 50 405 403",
   // Format international sans "+" ni espaces, ex : "21620123456"
-  whatsapp: "",
-  email: "", // optionnel
-  serviceArea: "[VILLE / RÉGION], Tunisie",
+  whatsapp: "21650405403",
+  email: "ahmed0404@gmail.com",
+  address: "Cité Riadh, Kélibia 8090, Tunisie",
+  serviceArea: "Kélibia (8090) et sa région, Tunisie",
+  // Page Facebook : coller ici le lien exact de la page (facebook.com/…)
+  facebookUrl: "",
   whatsappMessage:
     "Bonjour, je vous contacte depuis votre site web pour demander un devis en électricité bâtiment.",
 };
 
 export const hasPhone = () => business.phoneDisplay.trim() !== "";
 export const hasWhatsapp = () => /^\d{8,15}$/.test(business.whatsapp);
+export const hasFacebook = () => /^https?:\/\/([\w-]+\.)*facebook\.com\//i.test(business.facebookUrl.trim());
 export const whatsappLink = (message = business.whatsappMessage) =>
   `https://wa.me/${business.whatsapp}?text=${encodeURIComponent(message)}`;
 
