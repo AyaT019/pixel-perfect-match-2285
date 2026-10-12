@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Phone, Mail, MapPin, CheckCircle2, MessagesSquare, ShieldCheck, Sparkles, Lightbulb, User } from "lucide-react";
+import { ArrowRight, Phone, Mail, MapPin, MapPinned, CheckCircle2, MessagesSquare, ShieldCheck, Sparkles, Lightbulb, User, Facebook } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import { business, hasPhone, hasWhatsapp, services, whatsappLink } from "@/config/business";
+import { business, hasFacebook, hasPhone, hasWhatsapp, services, whatsappLink } from "@/config/business";
 import { Header } from "@/components/site/Header";
 import { Portfolio } from "@/components/site/Portfolio";
 import { QuoteForm } from "@/components/site/QuoteForm";
-import { Logo, ServiceIcon, WhatsappIcon } from "@/components/site/Icons";
+import { FacebookIcon, Logo, ServiceIcon, WhatsappIcon } from "@/components/site/Icons";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -152,6 +152,8 @@ function Index() {
                     {hasPhone() ? <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="font-medium hover:text-primary">{business.phoneDisplay}</a> : <SetupNote>Numéro de téléphone à configurer</SetupNote>}
                   </li>
                   <li className="flex items-center gap-4"><MapPin className="h-5 w-5 shrink-0 text-primary" /><span>{business.serviceArea}</span></li>
+                  <li className="flex items-center gap-4"><MapPinned className="h-5 w-5 shrink-0 text-primary" /><span>{business.address}</span></li>
+                  {hasFacebook() && <li className="flex items-center gap-4"><Facebook className="h-5 w-5 shrink-0 text-primary" /><a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary">{business.name} sur Facebook</a></li>}
                   {business.email && <li className="flex items-center gap-4"><Mail className="h-5 w-5 shrink-0 text-primary" /><a href={`mailto:${business.email}`} className="hover:text-primary">{business.email}</a></li>}
                 </ul>
                 <div className="mt-10">
@@ -180,8 +182,9 @@ function Index() {
             <h3 className="text-sm font-semibold">Contact</h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground">
               <li>{hasPhone() ? business.phoneDisplay : "Téléphone à configurer"}</li>
-              {business.email && <li>{business.email}</li>}
-              <li>{business.serviceArea}</li>
+              {business.email && <li><a href={`mailto:${business.email}`} className="hover:text-foreground">{business.email}</a></li>}
+              <li>{business.address}</li>
+              {hasFacebook() && <li className="flex items-center gap-2"><FacebookIcon className="h-4 w-4" /><a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Facebook</a></li>}
             </ul>
           </div>
         </div>
