@@ -27,7 +27,7 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 function Index() {
   return (
-    <div className="overflow-x-clip">
+    <div className="overflow-x-clip pb-20 sm:pb-0">
       <Header />
       <main>
         {/* HERO */}
@@ -47,6 +47,7 @@ function Index() {
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <a href="#contact" className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 font-semibold text-primary-foreground transition hover:glow">Demander un devis <ArrowRight className="h-4 w-4" /></a>
+                {hasPhone() && <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/50 bg-background/40 px-7 py-4 font-semibold backdrop-blur sm:hidden"><Phone className="h-4 w-4" /> Appeler {business.phoneDisplay}</a>}
                 <a href="#realisations" className="inline-flex items-center justify-center rounded-full border border-foreground/20 px-7 py-4 font-semibold backdrop-blur transition hover:border-primary">Découvrir nos réalisations</a>
               </div>
             </div>
@@ -139,28 +140,24 @@ function Index() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="mx-auto max-w-7xl px-5 py-24 lg:px-8 lg:py-32">
+        <section id="contact" className="mx-auto max-w-7xl scroll-mt-20 px-3 py-16 sm:px-5 sm:py-24 lg:px-8 lg:py-32">
           <div className="relative overflow-hidden rounded-3xl border bg-surface">
             <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
-            <div className="relative grid gap-12 p-6 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:p-14">
+            <div className="relative grid gap-10 p-5 sm:p-10 lg:grid-cols-[1fr_1.3fr] lg:p-14">
               <div>
                 <Eyebrow>Contact</Eyebrow>
                 <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Parlons de votre projet</h2>
                 <p className="mt-4 text-muted-foreground">Décrivez vos besoins : vous recevrez une réponse rapide pour convenir d'une visite ou d'un devis.</p>
-                <ul className="mt-10 grid gap-5">
-                  <li className="flex items-center gap-4"><Phone className="h-5 w-5 shrink-0 text-primary" />
-                    {hasPhone() ? <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="font-medium hover:text-primary">{business.phoneDisplay}</a> : <SetupNote>Numéro de téléphone à configurer</SetupNote>}
-                  </li>
-                  <li className="flex items-center gap-4"><MapPin className="h-5 w-5 shrink-0 text-primary" /><span>{business.serviceArea}</span></li>
-                  <li className="flex items-center gap-4"><MapPinned className="h-5 w-5 shrink-0 text-primary" /><span>{business.address}</span></li>
-                  {hasFacebook() && <li className="flex items-center gap-4"><Facebook className="h-5 w-5 shrink-0 text-primary" /><a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary">{business.name} sur Facebook</a></li>}
-                  {business.email && <li className="flex items-center gap-4"><Mail className="h-5 w-5 shrink-0 text-primary" /><a href={`mailto:${business.email}`} className="hover:text-primary">{business.email}</a></li>}
+                <ul className="mt-8 grid gap-3">
+                  <li>{hasPhone() ? (
+                    <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="flex min-h-14 items-center gap-4 rounded-2xl border bg-background/60 px-4 py-3 transition hover:border-primary active:scale-[0.99]"><Phone className="h-5 w-5 shrink-0 text-primary" /><span className="min-w-0"><span className="block text-xs text-muted-foreground">Appeler</span><span className="block font-semibold">{business.phoneDisplay}</span></span></a>
+                  ) : <SetupNote>Numéro de téléphone à configurer</SetupNote>}</li>
+                  {hasWhatsapp() && <li><a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="flex min-h-14 items-center gap-4 rounded-2xl border bg-background/60 px-4 py-3 transition hover:border-whatsapp active:scale-[0.99]"><WhatsappIcon className="h-5 w-5 shrink-0 text-whatsapp" /><span className="min-w-0"><span className="block text-xs text-muted-foreground">WhatsApp</span><span className="block font-semibold">Écrire un message</span></span></a></li>}
+                  {business.email && <li><a href={`mailto:${business.email}`} className="flex min-h-14 items-center gap-4 rounded-2xl border bg-background/60 px-4 py-3 transition hover:border-primary active:scale-[0.99]"><Mail className="h-5 w-5 shrink-0 text-primary" /><span className="min-w-0"><span className="block text-xs text-muted-foreground">E-mail</span><span className="block break-all font-semibold">{business.email}</span></span></a></li>}
+                  {hasFacebook() && <li><a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="flex min-h-14 items-center gap-4 rounded-2xl border bg-background/60 px-4 py-3 transition hover:border-primary"><Facebook className="h-5 w-5 shrink-0 text-primary" /><span className="font-semibold">{business.name} sur Facebook</span></a></li>}
+                  <li className="flex items-start gap-4 px-4 py-2 text-sm text-muted-foreground"><MapPinned className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><span>{business.address}</span></li>
+                  <li className="flex items-start gap-4 px-4 py-2 text-sm text-muted-foreground"><MapPin className="mt-0.5 h-5 w-5 shrink-0 text-primary" /><span>{business.serviceArea}</span></li>
                 </ul>
-                <div className="mt-10">
-                  {hasWhatsapp() ? (
-                    <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3.5 font-semibold text-background transition hover:opacity-90"><WhatsappIcon /> Écrire sur WhatsApp</a>
-                  ) : <SetupNote>Numéro WhatsApp à configurer</SetupNote>}
-                </div>
               </div>
               <QuoteForm />
             </div>
@@ -181,7 +178,7 @@ function Index() {
           <div>
             <h3 className="text-sm font-semibold">Contact</h3>
             <ul className="mt-4 grid gap-2 text-sm text-muted-foreground">
-              <li>{hasPhone() ? business.phoneDisplay : "Téléphone à configurer"}</li>
+              <li>{hasPhone() ? <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="hover:text-foreground">{business.phoneDisplay}</a> : "Téléphone à configurer"}</li>
               {business.email && <li><a href={`mailto:${business.email}`} className="hover:text-foreground">{business.email}</a></li>}
               <li>{business.address}</li>
               {hasFacebook() && <li className="flex items-center gap-2"><FacebookIcon className="h-4 w-4" /><a href={business.facebookUrl} target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Facebook</a></li>}
@@ -195,10 +192,16 @@ function Index() {
         href={hasWhatsapp() ? whatsappLink() : "#contact"}
         {...(hasWhatsapp() ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         aria-label="Contacter sur WhatsApp"
-        className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-whatsapp text-background shadow-lg transition hover:scale-105"
+        className="fixed bottom-5 right-5 z-40 hidden sm:grid h-14 w-14 place-items-center rounded-full bg-whatsapp text-background shadow-lg transition hover:scale-105"
       >
         <WhatsappIcon className="h-7 w-7" />
       </a>
+
+      <nav aria-label="Contact rapide" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 gap-2 border-t bg-background/95 px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:hidden">
+        <a href={hasPhone() ? `tel:${business.phoneDisplay.replace(/\s/g, "")}` : "#contact"} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl border text-xs font-semibold"><Phone className="h-5 w-5 text-primary" />Appeler</a>
+        <a href={hasWhatsapp() ? whatsappLink() : "#contact"} {...(hasWhatsapp() ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl bg-whatsapp text-xs font-semibold text-background"><WhatsappIcon className="h-5 w-5" />WhatsApp</a>
+        <a href="#devis" className="flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl bg-primary text-xs font-semibold text-primary-foreground"><ArrowRight className="h-5 w-5" />Devis</a>
+      </nav>
     </div>
   );
 }

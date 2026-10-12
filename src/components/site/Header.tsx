@@ -35,7 +35,8 @@ export function Header() {
         </ul>
         <div className="flex shrink-0 items-center gap-2">
           <a href="#contact" className="hidden rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:glow sm:inline-flex">Demander un devis</a>
-          <button className="grid h-10 w-10 place-items-center rounded-full border lg:hidden" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}>
+          {hasPhone() && <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} aria-label={`Appeler ${business.phoneDisplay}`} className="grid h-11 w-11 place-items-center rounded-full bg-primary text-primary-foreground sm:hidden"><Phone className="h-5 w-5" /></a>}
+          <button className="grid h-11 w-11 place-items-center rounded-full border lg:hidden" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}>
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
