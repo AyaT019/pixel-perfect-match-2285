@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Phone, Mail, MapPin, MapPinned, CheckCircle2, MessagesSquare, ShieldCheck, Sparkles, Lightbulb, Facebook } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import portraitAsset from "@/assets/portrait.jpg.asset.json";
 import { business, hasFacebook, hasPhone, hasWhatsapp, services, whatsappLink } from "@/config/business";
 import { Header } from "@/components/site/Header";
 import { Portfolio } from "@/components/site/Portfolio";
@@ -91,7 +90,7 @@ function Index() {
           <div className="relative">
             <div className="circuit-bg absolute -inset-8" />
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border bg-surface">
-              <img src={portraitAsset.url} alt={`${business.name}, électricien bâtiment`} width={896} height={1198} loading="lazy" className="h-full w-full object-cover object-top" />
+              <img src="/images/portrait.webp" alt={`${business.name}, électricien bâtiment`} width={896} height={1198} loading="lazy" className="h-full w-full object-cover object-top" />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background via-background/70 to-transparent p-5 pt-16">
                 <p className="text-xs font-semibold uppercase tracking-widest text-primary">{business.name}</p>
                 <p className="mt-1 text-sm text-muted-foreground">Électricien bâtiment • Kélibia</p>
